@@ -12,7 +12,7 @@ interface PaginationProps {
   onPageChange: (page: number) => void;
 }
 
-// Builds a windowed page list: 1 ... 4 5 [6] 7 8 ... 20
+
 const getPageWindow = (
   current: number,
   total: number,
@@ -81,7 +81,7 @@ const Pagination = ({ meta, onPageChange }: PaginationProps) => {
                 key={page}
                 onClick={() => onPageChange(page)}
                 disabled={page === meta.currentPage}
-                className={`min-w-[32px] px-2 py-1.5 rounded-md border transition-colors cursor-pointer ${
+                className={`min-w-8 px-2 py-1.5 rounded-md border transition-colors cursor-pointer ${
                   page === meta.currentPage
                     ? "bg-emerald-600 border-emerald-600 text-white cursor-default"
                     : "bg-gray-850 border-gray-700 text-gray-200 hover:bg-gray-700"

@@ -7,10 +7,10 @@ const getRequestUserId = (req: Request): string | null => {
   return (req as any).userId || (req as any).id || (req as any).user?.id || (req as any).user?.userId || null;
 };
 
-// 🚀 GET /applications - Shared board, visible to everyone
+// GET /applications - Shared board, visible to everyone
 export const getAllApplications = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    // 1. Extract query parameters with smart fallbacks
+    
     const search = req.query.search as string || '';
     const status = req.query.status as string || '';
     const jobType = req.query.jobType as string || '';
@@ -22,7 +22,6 @@ export const getAllApplications = async (req: Request, res: Response, next: Next
     const limit = parseInt(req.query.limit as string) || 10;
     const skip = (page - 1) * limit;
 
-    // 2. Construct the where clause—no userId scoping, shared across all users
     const whereClause: any = {};
 
     if (search) {
@@ -36,7 +35,7 @@ export const getAllApplications = async (req: Request, res: Response, next: Next
     if (status) whereClause.status = status.toUpperCase();
     if (jobType) whereClause.jobType = jobType.toUpperCase();
 
-    // 3. Concurrent multi-query transaction
+
     const [applications, totalCount] = await prisma.$transaction([
       prisma.jobApplication.findMany({
         where: whereClause,
@@ -80,7 +79,7 @@ export const getApplicationById = async (req: Request, res: Response, next: Next
   }
 };
 
-// ✨ POST /applications
+//  POST /applications
 export const createApplication = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const validatedData = CreateApplicationSchema.parse(req.body);
@@ -113,7 +112,7 @@ export const createApplication = async (req: Request, res: Response, next: NextF
   }
 };
 
-// 📝 PATCH /applications/:id - Anyone can edit any application
+//  PATCH /applications/:id - Anyone can edit any application
 export const updateApplication = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id as string;
@@ -134,7 +133,7 @@ export const updateApplication = async (req: Request, res: Response, next: NextF
   }
 };
 
-// 🗑️ DELETE /applications/:id - Anyone can delete any application
+//  DELETE /applications/:id - Anyone can delete any application
 export const deleteApplication = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id as string;

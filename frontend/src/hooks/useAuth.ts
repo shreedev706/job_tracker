@@ -67,7 +67,7 @@ export const useAuth = () => {
         await logoutApi(refreshToken);
       }
     } catch {
-      // even if the backend call fails, proceed to clear local session
+      
     } finally {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");

@@ -8,7 +8,7 @@ import {
   deleteApplication,
 } from '../application.controller';
 
-// Mock the entire prisma module so no real DB connection is ever made
+
 jest.mock('../../prisma', () => ({
   __esModule: true,
   default: {
@@ -24,7 +24,7 @@ jest.mock('../../prisma', () => ({
   },
 }));
 
-// ---- shared test helpers ----
+//  shared test helpers 
 const mockRequest = (overrides: Partial<Request> = {}) =>
   ({ query: {}, params: {}, body: {}, ...overrides } as unknown as Request);
 
@@ -151,7 +151,7 @@ describe('application.controller', () => {
     });
   });
 
-  // -----------------------------------------------------------------------
+  
   describe('updateApplication', () => {
     it('updates an application regardless of which user owns it', async () => {
       const existing = { id: 'app-1', companyName: 'Old Co', userId: 'user-B' };
@@ -168,7 +168,7 @@ describe('application.controller', () => {
 
       await updateApplication(req, res, next);
 
-      // Confirm ownership is NOT checked
+      
       expect(prisma.jobApplication.findFirst).toHaveBeenCalledWith({
         where: { id: 'app-1' },
       });
@@ -195,7 +195,7 @@ describe('application.controller', () => {
     });
   });
 
-  // -----------------------------------------------------------------------
+  
   describe('deleteApplication', () => {
     it('deletes an application regardless of which user owns it', async () => {
       const existing = { id: 'app-1', companyName: 'Acme', userId: 'user-B' };

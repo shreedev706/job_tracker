@@ -9,7 +9,7 @@ export const AuthPage = () => {
     <div
       className="min-h-screen flex items-center justify-center bg-gray-900 bg-cover bg-center bg-no-repeat"
       style={{
-        // 🌟 Points directly to public/background.jpg with a dark overlay overlay
+       
         backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.75)), url('assets/background.jpg')`,
       }}
     >

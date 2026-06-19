@@ -13,18 +13,18 @@ model User {
   email         String           @unique
   password      String
   name          String?
-  refreshTokens RefreshToken[]   // 👈 One user can have multiple active logged-in sessions (e.g., Mobile & Laptop)
+  refreshTokens RefreshToken[]   
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt
 }
 
 model RefreshToken {
   id        String   @id @default(uuid())
-  token     String   @unique // The hashed or unique string representing the session
+  token     String   @unique 
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   isRevoked Boolean  @default(false)
-  expiresAt DateTime // The specific date when this token dies
+  expiresAt DateTime 
   createdAt DateTime @default(now())
 }
 

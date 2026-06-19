@@ -10,7 +10,7 @@ import {
 
 const router = Router();
 
-// 🔒 All routes now pass through the JWT check first!
+
 router.get('/', authenticateJWT, getAllApplications);
 router.get('/:id', authenticateJWT, getApplicationById);
 router.post('/', authenticateJWT, createApplication);

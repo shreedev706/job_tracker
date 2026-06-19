@@ -1,8 +1,8 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5000"; // Adjust your base port/URL as needed
+const API_URL = "http://localhost:5000"; 
 
-// Helper function to get token from storage
+
 const getAuthHeaders = () => {
   const token = localStorage.getItem("accessToken");
   return {

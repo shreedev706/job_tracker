@@ -7,10 +7,10 @@ import { RegisterSchema, LoginSchema, RefreshTokenSchema } from '../validators/a
 import { AuthenticatedRequest } from '../middlewares/auth.middlewares';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback_access_secret';
-const ACCESS_TOKEN_EXPIRY = '15m'; // Short-lived security window
-const REFRESH_TOKEN_EXPIRY_DAYS = 7; // Long-lived session window
+const ACCESS_TOKEN_EXPIRY = '15m'; 
+const REFRESH_TOKEN_EXPIRY_DAYS = 7; 
 
-// Helper to generate a random cryptographically secure string for database tracking
+
 const generateRefreshString = (): string => {
   return crypto.randomBytes(40).toString('hex');
 };
@@ -89,23 +89,23 @@ export const login = async (req: Request, res: Response) => {
   }
 };
 
-// 🔄 THE REFRESH ENDPOINT: Generates a fresh Access Token using a valid Refresh Token
+
 export const refresh = async (req: Request, res: Response) => {
   try {
     const validatedData = RefreshTokenSchema.parse(req.body);
 
-    // Look up the refresh token in PostgreSQL
+  
     const dbToken = await prisma.refreshToken.findUnique({
       where: { token: validatedData.refreshToken },
       include: { user: true },
     });
 
-    // Security Checks: Does it exist? Is it revoked? Is it expired?
+   
     if (!dbToken || dbToken.isRevoked || dbToken.expiresAt < new Date()) {
       return res.status(403).json({ error: 'Invalid, expired, or revoked refresh token' });
     }
 
-    // Issue a brand new short-lived access token
+   
     const newAccessToken = jwt.sign({ userId: dbToken.userId }, JWT_SECRET, { expiresIn: ACCESS_TOKEN_EXPIRY });
 
     res.json({
@@ -122,7 +122,7 @@ export const logout = async (req: Request, res: Response) => {
   try {
     const validatedData = RefreshTokenSchema.parse(req.body);
 
-    // Completely remove the token record from our database so it can never be used again
+    
     await prisma.refreshToken.deleteMany({
       where: { token: validatedData.refreshToken },
     });

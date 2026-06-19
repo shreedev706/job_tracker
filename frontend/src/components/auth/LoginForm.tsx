@@ -15,7 +15,7 @@ export const LoginForm = ({ onToggleForm }: LoginFormProps) => {
     e.preventDefault();
     setError(null);
     await login({ email, password });
-    // useAuth already handles localStorage, Redux dispatch, and navigation
+   
   };
 
   return (

@@ -5,7 +5,8 @@ A full-stack job application tracker. Track companies, roles, statuses, and appl
 ## Demo
 
 - **Screenshots / demo video:** _Coming soon_
-- **Live demo:** _Not deployed yet_
+- **Live demo:** 
+(https://job-tracker-gc1dssthg-shreedev-sharmas-projects.vercel.app/au)
 
 ## Project Overview
 

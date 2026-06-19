@@ -15,7 +15,7 @@ export const RegisterForm = ({ onToggleForm }: RegisterFormProps) => {
     e.preventDefault();
     setError(null);
     await register({ email, password, name });
-    // useAuth already handles localStorage, Redux dispatch, and navigation
+    
   };
 
   return (

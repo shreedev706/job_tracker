@@ -63,14 +63,14 @@ export const DashboardPage = () => {
   const [newJob, setNewJob] = useState<JobFormState>(emptyJob);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-  // Local input state so typing feels instant; debounced before hitting Redux/API
+
   const [searchInput, setSearchInput] = useState(searchQuery);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Refetch whenever search, filters, sort, or page change
+  
   useEffect(() => {
     fetchJobs();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, [searchQuery, statusFilter, typeFilter, sortOrder, currentPage]);
 
   const handleSearchChange = (value: string) => {

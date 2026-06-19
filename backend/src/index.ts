@@ -45,5 +45,5 @@ app.use('/applications', applicationRoutes);
 app.use(globalErrorHandler);
 
 app.listen(PORT, () => {
-  console.log(`🚀 Server is flying on port ${PORT}`);
+  console.log(` Server is flying on port ${PORT}`);
 });
