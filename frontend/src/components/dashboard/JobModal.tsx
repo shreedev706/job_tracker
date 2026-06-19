@@ -1,20 +1,30 @@
+interface JobFormData {
+  companyName: string;
+  jobTitle: string;
+  jobType: string;
+  status: string;
+  notes: string;
+  appliedDate: string;
+}
+
 interface JobModalProps {
   isOpen: boolean;
+  mode: "create" | "edit" | "view";
   onClose: () => void;
   onSubmit: (e: React.FormEvent) => void;
-  newJob: {
-    companyName: string;
-    jobTitle: string;
-    jobType: string;
-    status: string;
-    notes: string;
-    appliedDate: string;
-  };
+  newJob: JobFormData;
   setNewJob: (job: any) => void;
 }
 
+const TITLES: Record<JobModalProps["mode"], string> = {
+  create: "Track New Job Application",
+  edit: "Edit Application",
+  view: "Application Details",
+};
+
 const JobModal = ({
   isOpen,
+  mode,
   onClose,
   onSubmit,
   newJob,
@@ -22,13 +32,13 @@ const JobModal = ({
 }: JobModalProps) => {
   if (!isOpen) return null;
 
+  const isReadOnly = mode === "view";
+
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-[#111827] border border-gray-800 rounded-xl w-full max-w-md p-6 shadow-2xl space-y-4">
         <div className="flex justify-between items-center border-b border-gray-800 pb-3">
-          <h3 className="text-lg font-bold text-white">
-            Track New Job Application
-          </h3>
+          <h3 className="text-lg font-bold text-white">{TITLES[mode]}</h3>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-white cursor-pointer"
@@ -46,12 +56,13 @@ const JobModal = ({
               type="text"
               required
               minLength={2}
+              disabled={isReadOnly}
               placeholder="Minimum 2 characters"
               value={newJob.companyName}
               onChange={(e) =>
                 setNewJob({ ...newJob, companyName: e.target.value })
               }
-              className="w-full bg-[#1f2937] text-sm text-gray-100 p-2.5 rounded-md border border-gray-700 focus:outline-none focus:border-emerald-500"
+              className="w-full bg-[#1f2937] text-sm text-gray-100 p-2.5 rounded-md border border-gray-700 focus:outline-none focus:border-emerald-500 disabled:opacity-60 disabled:cursor-not-allowed"
             />
           </div>
 
@@ -62,12 +73,13 @@ const JobModal = ({
             <input
               type="text"
               required
+              disabled={isReadOnly}
               placeholder="e.g. Frontend Engineer"
               value={newJob.jobTitle}
               onChange={(e) =>
                 setNewJob({ ...newJob, jobTitle: e.target.value })
               }
-              className="w-full bg-[#1f2937] text-sm text-gray-100 p-2.5 rounded-md border border-gray-700 focus:outline-none focus:border-emerald-500"
+              className="w-full bg-[#1f2937] text-sm text-gray-100 p-2.5 rounded-md border border-gray-700 focus:outline-none focus:border-emerald-500 disabled:opacity-60 disabled:cursor-not-allowed"
             />
           </div>
 
@@ -78,10 +90,11 @@ const JobModal = ({
               </label>
               <select
                 value={newJob.jobType}
+                disabled={isReadOnly}
                 onChange={(e) =>
                   setNewJob({ ...newJob, jobType: e.target.value })
                 }
-                className="w-full bg-[#1f2937] text-sm text-gray-100 p-2.5 rounded-md border border-gray-700 focus:outline-none focus:border-emerald-500"
+                className="w-full bg-[#1f2937] text-sm text-gray-100 p-2.5 rounded-md border border-gray-700 focus:outline-none focus:border-emerald-500 disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 <option value="INTERNSHIP">Internship</option>
                 <option value="FULL_TIME">Full-time</option>
@@ -95,10 +108,11 @@ const JobModal = ({
               </label>
               <select
                 value={newJob.status}
+                disabled={isReadOnly}
                 onChange={(e) =>
                   setNewJob({ ...newJob, status: e.target.value })
                 }
-                className="w-full bg-[#1f2937] text-sm text-gray-100 p-2.5 rounded-md border border-gray-700 focus:outline-none focus:border-emerald-500"
+                className="w-full bg-[#1f2937] text-sm text-gray-100 p-2.5 rounded-md border border-gray-700 focus:outline-none focus:border-emerald-500 disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 <option value="APPLIED">Applied</option>
                 <option value="INTERVIEWING">Interviewing</option>
@@ -115,11 +129,12 @@ const JobModal = ({
             <input
               type="date"
               required
+              disabled={isReadOnly}
               value={newJob.appliedDate}
               onChange={(e) =>
                 setNewJob({ ...newJob, appliedDate: e.target.value })
               }
-              className="w-full bg-[#1f2937] text-sm text-gray-100 p-2.5 rounded-md border border-gray-700 focus:outline-none focus:border-emerald-500 color-scheme-dark"
+              className="w-full bg-[#1f2937] text-sm text-gray-100 p-2.5 rounded-md border border-gray-700 focus:outline-none focus:border-emerald-500 color-scheme-dark disabled:opacity-60 disabled:cursor-not-allowed"
             />
           </div>
 
@@ -129,10 +144,11 @@ const JobModal = ({
             </label>
             <textarea
               placeholder="Add key observations or links..."
+              disabled={isReadOnly}
               value={newJob.notes}
               rows={3}
               onChange={(e) => setNewJob({ ...newJob, notes: e.target.value })}
-              className="w-full bg-[#1f2937] text-sm text-gray-100 p-2.5 rounded-md border border-gray-700 focus:outline-none focus:border-emerald-500 resize-none"
+              className="w-full bg-[#1f2937] text-sm text-gray-100 p-2.5 rounded-md border border-gray-700 focus:outline-none focus:border-emerald-500 resize-none disabled:opacity-60 disabled:cursor-not-allowed"
             />
           </div>
 
@@ -142,14 +158,16 @@ const JobModal = ({
               onClick={onClose}
               className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-md cursor-pointer"
             >
-              Cancel
+              {isReadOnly ? "Close" : "Cancel"}
             </button>
-            <button
-              type="submit"
-              className="px-4 py-2 bg-[#10b981] hover:bg-[#059669] text-white rounded-md shadow-md cursor-pointer"
-            >
-              Track Application
-            </button>
+            {!isReadOnly && (
+              <button
+                type="submit"
+                className="px-4 py-2 bg-[#10b981] hover:bg-[#059669] text-white rounded-md shadow-md cursor-pointer"
+              >
+                {mode === "edit" ? "Save Changes" : "Track Application"}
+              </button>
+            )}
           </div>
         </form>
       </div>

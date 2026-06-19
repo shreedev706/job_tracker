@@ -7,12 +7,9 @@ const getRequestUserId = (req: Request): string | null => {
   return (req as any).userId || (req as any).id || (req as any).user?.id || (req as any).user?.userId || null;
 };
 
-// 🚀 GET /applications - Filtered securely by logged-in user
+// 🚀 GET /applications - Shared board, visible to everyone
 export const getAllApplications = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const userId = getRequestUserId(req);
-    if (!userId) return res.status(401).json({ error: 'Session missing or expired. Please login again.' });
-
     // 1. Extract query parameters with smart fallbacks
     const search = req.query.search as string || '';
     const status = req.query.status as string || '';
@@ -25,8 +22,8 @@ export const getAllApplications = async (req: Request, res: Response, next: Next
     const limit = parseInt(req.query.limit as string) || 10;
     const skip = (page - 1) * limit;
 
-    // 2. Construct the where clause—always scoped strictly to this user!
-    const whereClause: any = { userId: userId };
+    // 2. Construct the where clause—no userId scoping, shared across all users
+    const whereClause: any = {};
 
     if (search) {
       whereClause.OR = [
@@ -70,12 +67,10 @@ export const getAllApplications = async (req: Request, res: Response, next: Next
 
 export const getApplicationById = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const id = req.params.id as string; // 👈 Cast strictly to string
-    const userId = getRequestUserId(req);
-    if (!userId) return res.status(401).json({ error: 'Unauthorized' });
+    const id = req.params.id as string;
 
     const application = await prisma.jobApplication.findFirst({ 
-      where: { id: id, userId: userId as string } // 👈 Added 'as string' type casting
+      where: { id: id }
     });
     
     if (!application) return res.status(404).json({ error: 'Application not found' });
@@ -118,23 +113,19 @@ export const createApplication = async (req: Request, res: Response, next: NextF
   }
 };
 
-// 📝 PATCH /applications/:id
+// 📝 PATCH /applications/:id - Anyone can edit any application
 export const updateApplication = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const id = req.params.id as string; // 👈 Cast strictly to string
-    const userId = getRequestUserId(req);
-    if (!userId) return res.status(401).json({ error: 'Unauthorized' });
-
+    const id = req.params.id as string;
     const validatedData = UpdateApplicationSchema.parse(req.body);
 
-    // Ensure the application belongs to the user
     const exists = await prisma.jobApplication.findFirst({ 
-      where: { id: id, userId: userId as string } // 👈 Added 'as string' type casting
+      where: { id: id }
     });
     if (!exists) return res.status(404).json({ error: 'Application not found' });
 
     const updated = await prisma.jobApplication.update({
-      where: { id: id }, // 👈 Added 'as string' type casting safety
+      where: { id: id },
       data: validatedData,
     });
     return res.json(updated);
@@ -143,20 +134,18 @@ export const updateApplication = async (req: Request, res: Response, next: NextF
   }
 };
 
-// 🗑️ DELETE /applications/:id
+// 🗑️ DELETE /applications/:id - Anyone can delete any application
 export const deleteApplication = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const id = req.params.id as string; // 👈 Cast strictly to string
-    const userId = getRequestUserId(req);
-    if (!userId) return res.status(401).json({ error: 'Unauthorized' });
+    const id = req.params.id as string;
 
     const exists = await prisma.jobApplication.findFirst({ 
-      where: { id: id, userId: userId as string } // 👈 Added 'as string' type casting
+      where: { id: id }
     });
     if (!exists) return res.status(404).json({ error: 'Application not found' });
 
     await prisma.jobApplication.delete({ 
-      where: { id: id } // 👈 Added 'as string' type casting safety
+      where: { id: id }
     });
     return res.json({ message: 'Application successfully deleted' });
   } catch (error) {

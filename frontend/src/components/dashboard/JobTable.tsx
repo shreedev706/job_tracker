@@ -2,10 +2,22 @@ import type { JobApplication } from "../../http/job";
 
 interface JobTableProps {
   jobs: JobApplication[];
+  onView: (job: JobApplication) => void;
+  onEdit: (job: JobApplication) => void;
   onDelete: (id: string) => void;
 }
 
-export const JobTable = ({ jobs, onDelete }: JobTableProps) => {
+const formatDate = (date: string | Date) => {
+  const d = new Date(date);
+  if (isNaN(d.getTime())) return "—";
+  return d.toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+};
+
+export const JobTable = ({ jobs, onView, onEdit, onDelete }: JobTableProps) => {
   if (!jobs || jobs.length === 0) {
     return (
       <div className="text-center py-10 text-gray-400 border border-gray-700 rounded-lg bg-[#1a1a1a]">
@@ -23,6 +35,7 @@ export const JobTable = ({ jobs, onDelete }: JobTableProps) => {
             <th className="p-4">Role</th>
             <th className="p-4">Type</th>
             <th className="p-4">Status</th>
+            <th className="p-4">Applied Date</th>
             <th className="p-4">Actions</th>
           </tr>
         </thead>
@@ -44,13 +57,30 @@ export const JobTable = ({ jobs, onDelete }: JobTableProps) => {
                   {job.status}
                 </span>
               </td>
+              <td className="p-4 text-gray-400">
+                {formatDate(job.appliedDate)}
+              </td>
               <td className="p-4">
-                <button
-                  onClick={() => onDelete(job.id!)}
-                  className="text-red-400 hover:text-red-300 font-medium"
-                >
-                  Delete
-                </button>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => onView(job)}
+                    className="text-gray-300 hover:text-white font-medium"
+                  >
+                    View
+                  </button>
+                  <button
+                    onClick={() => onEdit(job)}
+                    className="text-emerald-400 hover:text-emerald-300 font-medium"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => onDelete(job.id!)}
+                    className="text-red-400 hover:text-red-300 font-medium"
+                  >
+                    Delete
+                  </button>
+                </div>
               </td>
             </tr>
           ))}

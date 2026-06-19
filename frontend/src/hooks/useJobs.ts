@@ -4,6 +4,7 @@ import type { RootState, AppDispatch } from "../features/store";
 import {
   fetchJobsThunk,
   createJobThunk,
+  updateJobThunk,
   deleteJobThunk,
   setSearchQuery,
   setStatusFilter,
@@ -12,7 +13,7 @@ import {
   setCurrentPage,
   clearJobErrors,
 } from "../features/job/jobSlice";
-import type { CreateJobPayload } from "../http/job";
+import type { CreateJobPayload, JobApplication } from "../http/job";
 
 export const useJob = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -36,6 +37,13 @@ export const useJob = () => {
   const createJob = useCallback(
     (jobData: CreateJobPayload) => {
       dispatch(createJobThunk(jobData));
+    },
+    [dispatch]
+  );
+
+  const updateJob = useCallback(
+    (id: string, jobData: Partial<JobApplication>) => {
+      dispatch(updateJobThunk({ id, jobData }));
     },
     [dispatch]
   );
@@ -98,6 +106,7 @@ export const useJob = () => {
     currentPage,
     fetchJobs,
     createJob,
+    updateJob,
     deleteJob,
     updateSearchQuery,
     updateStatusFilter,

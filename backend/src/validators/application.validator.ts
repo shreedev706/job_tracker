@@ -4,7 +4,7 @@ export const JobTypeEnum = z.enum(['INTERNSHIP', 'FULL_TIME', 'PART_TIME']);
 export const StatusEnum = z.enum(['APPLIED', 'INTERVIEWING', 'OFFER', 'REJECTED']);
 
 export const CreateApplicationSchema = z.object({
-  personName: z.string().min(2, 'Person name must be at least 2 characters'), // 👈 Added rule
+  personName: z.string().optional().nullable(),   // 👈 Added rule
   companyName: z.string().min(2, 'Company name must be at least 2 characters'),
   jobTitle: z.string().min(1, 'Job title is required'),
   jobType: JobTypeEnum,

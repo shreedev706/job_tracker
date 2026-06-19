@@ -7,20 +7,27 @@ import applicationRoutes from './routes/application.routes';
 import authRoutes from './routes/auth.routes';
 import { globalErrorHandler } from './middlewares/error.middleware';
 import cookieParser from 'cookie-parser';
-
-dotenv.config();
-
-const app = express();
 const PORT = process.env.PORT || 5000;
 
 
-app.use(cors({
-  origin: 'http://localhost:3000', // Update this to match your frontend URL if different
-  credentials: true // Crucial to allow HttpOnly cookies to pass through CORS
-}));
+
+const app = express();
+
+
+
+const corsOptions = {
+  origin: 'http://localhost:5173', // Your exact frontend URL
+  credentials: true,               // Required to allow tokens/cookies
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Explicitly include OPTIONS
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+  optionsSuccessStatus: 204 // Keeps your 204 response stable
+};
+
+app.use(cors(corsOptions));
+
 
 app.use(cookieParser());
-app.use(cors());
+
 app.use(express.json());
 
 app.get('/health', (req, res) => {

@@ -49,8 +49,8 @@ const FilterPanel = ({
         >
           <option value="All">All Types</option>
           <option value="INTERNSHIP">Internship</option>
-          <option value="FULL-TIME">Full-time</option>
-          <option value="PART-TIME">Part-time</option>
+          <option value="FULL_TIME">Full-time</option>
+          <option value="PART_TIME">Part-time</option>
         </select>
       </div>
 

@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, type PayloadAction } from "@reduxjs/toolkit";
-import { fetchApplicationsApi, createApplicationApi, deleteApplicationApi } from "../../http/job";
+import { fetchApplicationsApi, createApplicationApi, updateApplicationApi, deleteApplicationApi } from "../../http/job";
 import type { JobApplication, CreateJobPayload } from "../../http/job";
 
 interface JobState {
@@ -69,6 +69,19 @@ export const createJobThunk = createAsyncThunk(
   }
 );
 
+export const updateJobThunk = createAsyncThunk(
+  "job/update",
+  async ({ id, jobData }: { id: string; jobData: Partial<JobApplication> }, { dispatch, rejectWithValue }) => {
+    try {
+      const response = await updateApplicationApi(id, jobData);
+      dispatch(fetchJobsThunk());
+      return response;
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data?.message || "Could not update entry.");
+    }
+  }
+);
+
 export const deleteJobThunk = createAsyncThunk(
   "job/delete",
   async (id: string, { dispatch, rejectWithValue }) => {
@@ -122,12 +135,12 @@ const jobSlice = createSlice({
         const meta = action.payload.meta;
         if (meta) {
           state.paginationMeta = {
-            totalCount: meta.totalItems || meta.totalCount,
-            limit: meta.itemsPerPage || meta.limit,
+            totalCount: meta.totalCount,
+            limit: meta.limit,
             currentPage: meta.currentPage,
             totalPages: meta.totalPages,
-            hasNextPage: meta.currentPage < meta.totalPages,
-            hasPrevPage: meta.currentPage > 1,
+            hasNextPage: meta.hasNextPage,
+            hasPrevPage: meta.hasPrevPage,
           };
         }
       })
@@ -143,6 +156,17 @@ const jobSlice = createSlice({
         state.loading = false;
       })
       .addCase(createJobThunk.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(updateJobThunk.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateJobThunk.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(updateJobThunk.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })

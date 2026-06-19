@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import prisma from '../prisma';
 import { RegisterSchema, LoginSchema, RefreshTokenSchema } from '../validators/auth.validators';
+import { AuthenticatedRequest } from '../middlewares/auth.middlewares';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback_access_secret';
 const ACCESS_TOKEN_EXPIRY = '15m'; // Short-lived security window
@@ -16,6 +17,9 @@ const generateRefreshString = (): string => {
 
 export const register = async (req: Request, res: Response) => {
   try {
+     console.log('=== REGISTER HIT ===');
+  console.log('Body:', req.body);
+  console.log('Content-Type:', req.headers['content-type']);
     const validatedData = RegisterSchema.parse(req.body);
 
     const existingUser = await prisma.user.findUnique({ where: { email: validatedData.email } });
@@ -126,5 +130,22 @@ export const logout = async (req: Request, res: Response) => {
     res.json({ message: 'Logged out successfully' });
   } catch (error) {
     res.status(500).json({ error: 'Logout execution failed' });
+  }
+};
+
+export const getCurrentUser = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: req.userId },
+      select: { id: true, email: true, name: true },
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.json({ user });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch current user' });
   }
 };

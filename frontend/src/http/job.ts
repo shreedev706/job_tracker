@@ -52,7 +52,7 @@ export const createApplicationApi = async (jobData: CreateJobPayload) => {
 };
 
 export const updateApplicationApi = async (id: string, jobData: Partial<JobApplication>) => {
-  const response = await api.put(`/applications/${id}`, jobData);
+  const response = await api.patch(`/applications/${id}`, jobData);
   return response.data;
 };
 
