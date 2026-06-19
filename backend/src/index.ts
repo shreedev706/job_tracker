@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import express, { Request, Response } from 'express';
-import cors from 'cors';
+import cors, { CorsOptions } from 'cors';
 import applicationRoutes from './routes/application.routes';
 import authRoutes from './routes/auth.routes';
 import { globalErrorHandler } from './middlewares/error.middleware';
@@ -12,8 +12,19 @@ const PORT = process.env.PORT || 5000;
 
 const app = express();
 
-const corsOptions = {
-  origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+const corsOptions: CorsOptions = {
+  origin: (origin, callback) => {
+    const allowedOrigins = [
+      process.env.CORS_ORIGIN || 'https://job-tracker-cyan-eight.vercel.app',
+      'http://localhost:5173',
+    ];
+
+    if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
