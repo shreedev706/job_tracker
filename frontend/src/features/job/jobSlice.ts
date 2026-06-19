@@ -45,7 +45,7 @@ export const fetchJobsThunk = createAsyncThunk(
         status: statusFilter,
         jobType: typeFilter,
         page: currentPage.toString(),
-        limit: "10",
+        limit: "6",
         sortBy: "createdAt",
         sortOrder: sortOrder === "Latest" ? "desc" : "asc",
       });

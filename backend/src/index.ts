@@ -18,7 +18,7 @@ const app = express();
 const corsOptions = {
   origin: 'http://localhost:5173', // Your exact frontend URL
   credentials: true,               // Required to allow tokens/cookies
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Explicitly include OPTIONS
+  methods: ['GET', 'POST', 'PUT','PATCH','DELETE', 'OPTIONS'], // Explicitly include OPTIONS
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
   optionsSuccessStatus: 204 // Keeps your 204 response stable
 };

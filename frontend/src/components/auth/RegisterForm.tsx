@@ -84,7 +84,7 @@ export const RegisterForm = ({ onToggleForm }: RegisterFormProps) => {
             autoComplete="new-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="••••••••"
+            placeholder="Minimum six character"
             className="w-full px-4 py-2.5 bg-white text-gray-900 rounded-lg text-sm outline-none focus:ring-2 focus:ring-emerald-500"
             required
           />

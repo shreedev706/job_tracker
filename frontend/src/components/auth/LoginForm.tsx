@@ -65,7 +65,7 @@ export const LoginForm = ({ onToggleForm }: LoginFormProps) => {
             autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="••••••••"
+            placeholder="Minimum six characters"
             className="w-full px-4 py-2.5 bg-white text-gray-900 rounded-lg text-sm outline-none focus:ring-2 focus:ring-emerald-500"
             required
           />
