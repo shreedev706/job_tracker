@@ -1,73 +1,70 @@
+import { useEffect, useState } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { useDispatch } from "react-redux";
+import type { AppDispatch } from "./features/store";
+import { setAuth } from "./features/user/userSlice";
+import { getCurrentUser } from "./http/auth";
+import { AuthPage } from "./pages/AuthPage";
+import { DashboardPage } from "./pages/DashboardPage";
+import ProtectedRoute from "./components/shared/ProtectedRoute";
 
-import React from "react";
-import type { ReactNode } from "react";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import { Home, Dashboard, Register } from "./pages";
-import { useSelector } from "react-redux";
-import { useLoadingWithRefresh } from "./hooks/useLoadingWithRefresh";
-import {FullScreenLoader} from "./components/shared/FullScreenLoader";
+function App() {
+  const dispatch = useDispatch<AppDispatch>();
+  const [checkingAuth, setCheckingAuth] = useState(true);
 
-// 1. Define the type structure of your Redux Store state
-interface RootState {
-  auth: {
-    isAuth: boolean;
-    user: any; // You can change 'any' to your specific User type if needed
-  };
-}
+  useEffect(() => {
+    const verifySession = async () => {
+      const accessToken = localStorage.getItem("accessToken");
 
-// 2. Type definitions for Route Wrappers
-interface RouteProps {
-  children: ReactNode;
-}
+      if (!accessToken) {
+        setCheckingAuth(false);
+        return;
+      }
 
-const App: React.FC = () => {
-  const { loading } = useLoadingWithRefresh() as { loading: boolean };
+      try {
+        const { user } = await getCurrentUser();
+        dispatch(setAuth({ isAuthenticated: true, user }));
+      } catch {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+      } finally {
+        setCheckingAuth(false);
+      }
+    };
 
-  return loading ? (
-    <FullScreenLoader />
-  ) : (
-    <BrowserRouter>
+    verifySession();
+  }, [dispatch]);
+
+  if (checkingAuth) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#111111] text-white">
+        Loading...
+      </div>
+    );
+  }
+
+  return (
+    <Router>
       <Routes>
-        <Route
-          path="/"
-          element={
-            <GuestRoute>
-              <Home />
-            </GuestRoute>
-          }
-        />
-        <Route
-          path="/register"
-          element={
-            <GuestRoute>
-              <Register />
-            </GuestRoute>
-          }
-        />
+        <Route path="/" element={<Navigate to="/auth" replace />} />
+        <Route path="/auth" element={<AuthPage />} />
         <Route
           path="/dashboard"
           element={
             <ProtectedRoute>
-              <Dashboard />
+              <DashboardPage />
             </ProtectedRoute>
           }
         />
-        {/* Fallback route to redirect unknown URLs safely */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<Navigate to="/auth" replace />} />
       </Routes>
-    </BrowserRouter>
+    </Router>
   );
-};
-
-// 3. Strongly Typed Route Guards
-const GuestRoute: React.FC<RouteProps> = ({ children }) => {
-  const { isAuth } = useSelector((state: RootState) => state.auth);
-  return isAuth ? <Navigate to="/dashboard" replace={true} /> : <>{children}</>;
-};
-
-const ProtectedRoute: React.FC<RouteProps> = ({ children }) => {
-  const { isAuth } = useSelector((state: RootState) => state.auth);
-  return isAuth ? <>{children}</> : <Navigate to="/" replace={true} />;
-};
+}
 
 export default App;

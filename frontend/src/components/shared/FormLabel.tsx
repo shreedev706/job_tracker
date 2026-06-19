@@ -1,21 +1,18 @@
 import React from "react";
 
-// 1. Explicitly type component incoming properties
-interface FormLabelProps {
+interface LabelProps {
   htmlFor: string;
   labelHeading: string;
 }
 
-const FormLabel: React.FC<FormLabelProps> = ({ htmlFor, labelHeading }) => {
+const FormLabel: React.FC<LabelProps> = ({ htmlFor, labelHeading }) => {
   return (
-    <div>
-      <label
-        htmlFor={htmlFor} // ✨ Fixed: Swapped "for" to "htmlFor" to satisfy React compiler requirements
-        className="block mb-1.5 text-sm font-semibold text-neutral-300 tracking-wide select-none"
-      >
-        {labelHeading}
-      </label>
-    </div>
+    <label
+      htmlFor={htmlFor}
+      className="block mb-2 text-sm font-medium text-gray-300"
+    >
+      {labelHeading}
+    </label>
   );
 };
 
